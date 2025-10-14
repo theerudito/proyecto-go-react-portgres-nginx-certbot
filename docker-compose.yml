@@ -1,3 +1,4 @@
+
 services:
   # --- BACKEND (Go) ---
   backend:
@@ -72,7 +73,7 @@ services:
       --email erudito.dev@gmail.com
       --agree-tos
       --no-eff-email
-      -d test.between-bytes.tech"
+      -d nginx.between-bytes.tech"
     networks:
       - app-network
 
