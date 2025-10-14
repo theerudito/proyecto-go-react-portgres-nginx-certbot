@@ -73,7 +73,7 @@ services:
       --email erudito.dev@gmail.com
       --agree-tos
       --no-eff-email
-      -d nginx.between-bytes.tech"
+      -d docker.between-bytes.tech"
     networks:
       - app-network
 
