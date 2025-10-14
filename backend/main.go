@@ -52,8 +52,8 @@ func main() {
 	app := fiber.New()
 
 	allowedOrigins := map[string]bool{
-		"http://localhost:5173":           true, // desarrollo
-		"http://nginx.between-bytes.tech": true, // producción
+		"http://localhost:5173":                true, // desarrollo
+		"http://nginx.between-bytes.tech:3000": true, // producción
 	}
 
 	app.Use(cors.New(cors.Config{
