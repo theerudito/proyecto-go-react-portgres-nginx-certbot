@@ -55,7 +55,7 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     ports:
-      - "8081:80"
+      - "8082:80"
       - "4433:443"
     networks:
       - app-network
