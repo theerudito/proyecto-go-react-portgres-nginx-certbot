@@ -6,7 +6,7 @@ services:
     env_file:
       - ./backend/.env
     ports:
-      - "8081:8080"
+      - "1000:1000"
     depends_on:
       - db
     networks:
@@ -23,7 +23,7 @@ services:
     networks:
       - app-network
     ports:
-      - "5173:80" 
+      - "3000:80" 
 
   # --- DATABASE (PostgreSQL) ---
   db:
@@ -44,7 +44,7 @@ services:
 
   # --- NGINX Reverse Proxy ---
   nginx:
-    image: nginx:latest
+    image: nginx:alpine
     container_name: nginx_proxy
     depends_on:
       - frontend
@@ -54,8 +54,8 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     ports:
-      - "8082:80"
-      - "4433:443"
+      - "8080:80"
+      - "443:443"
     networks:
       - app-network
 

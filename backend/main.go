@@ -71,8 +71,8 @@ func main() {
 
 	v1.Get("/characters", getCharactersHandler(db))
 
-	log.Println("Servidor corriendo en http://0.0.0.0:8080")
-	log.Fatal(app.Listen(":8080"))
+	log.Println("Servidor corriendo en http://0.0.0.0:1000")
+	log.Fatal(app.Listen(":1000"))
 
 }
 

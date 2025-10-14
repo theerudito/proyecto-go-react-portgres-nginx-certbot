@@ -10,7 +10,7 @@ COPY . .
 
 RUN go build -o main .
 
-EXPOSE 8080
+EXPOSE 1000
 
 CMD ["./main"]
 
