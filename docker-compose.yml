@@ -1,3 +1,5 @@
+version: "3.7"
+
 services:
   # --- BACKEND (Go) ---
   backend:
@@ -42,48 +44,21 @@ services:
     networks:
       - app-network
 
-  # --- NGINX Reverse Proxy ---
+  # --- NGINX Reverse Proxy (sin SSL) ---
   nginx:
     image: nginx:alpine # Usamos la imagen oficial de Nginx
     container_name: nginx_proxy
     depends_on:
       - frontend
       - backend
-      - certbot # Dependencia de Certbot
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d # Volumen para la configuración de Nginx
-      - ./certbot/conf:/etc/letsencrypt # Volumen para los certificados generados
-      - ./certbot/www:/var/www/certbot # Volumen para las validaciones de ACME
     ports:
-      - "8081:80"
-      - "4455:443"
+      - "8081:80" # Solo HTTP, no SSL
     networks:
       - app-network
-
-  # --- CERTBOT (SSL) ---
-  certbot:
-    image: certbot/certbot
-    container_name: certbot_jl
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt # Volumen persistente para los certificados
-      - ./certbot/www:/var/www/certbot # Volumen de validación de Certbot
-    entrypoint: >
-      sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot --email erudito.dev@gmail.com --agree-tos --no-eff-email -d docker.between-bytes.tech"
-    networks:
-      - app-network
-
-  # --- WATCHTOWER (auto-update) ---
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower_jl
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=3600
-    networks:
-      - app-network
+  # --- CERTBOT (SSL) --- (No se utiliza en este caso, ya que no queremos SSL)
+  # No es necesario en este caso, puedes omitirlo.
 
 networks:
   app-network:
