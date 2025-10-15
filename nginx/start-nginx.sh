@@ -10,3 +10,4 @@ echo "Certificados SSL generados. Iniciando Nginx..."
 
 # Iniciar Nginx
 nginx -g "daemon off;"
+

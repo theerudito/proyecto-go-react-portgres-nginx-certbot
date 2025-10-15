@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   # --- BACKEND (Go) ---
   backend:
@@ -25,7 +23,7 @@ services:
     networks:
       - app-network
     ports:
-      - "3000:80" # El puerto 80 dentro del contenedor se mapea al puerto 3000 en el host
+      - "3000:80"
 
   # --- DATABASE (PostgreSQL) ---
   db:
@@ -58,7 +56,7 @@ services:
 
   # --- NGINX Reverse Proxy (SSL) ---
   nginx:
-    image: nginx:alpine # Usamos la imagen oficial de Nginx
+    image: nginx:alpine
     container_name: jl_nginx
     depends_on:
       - frontend
@@ -73,7 +71,7 @@ services:
       - "4455:443" # HTTPS
     networks:
       - app-network
-    command: [ "/bin/sh", "-c", "/start-nginx.sh" ] # Ejecutar script de espera antes de iniciar Nginx
+    command: [ "/bin/sh", "-c", "/start-nginx.sh" ]
 
 networks:
   app-network:
