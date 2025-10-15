@@ -1,0 +1,72 @@
+services:
+  # --- DATABASE (PostgreSQL) ---
+  db:
+    image: postgres:15
+    container_name: jl_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./backend/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+  
+  # --- BACKEND (Go) ---
+  backend:
+    build: ./backend
+    container_name: jl_backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "1000:1000"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  # --- FRONTEND (React/Vite) ---
+  frontend:
+    build: ./frontend
+    container_name: jl_frontend
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    ports:
+      - "3000:80"
+  
+  # --- CERTBOT ---
+  certbot:
+    image: certbot/certbot
+    container_name: jl_certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/www/certbot:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --keep-until-expiring --email ${EMAIL} -d ${DOMINIO} --agree-tos
+
+  # --- WATCH TOWER ---
+  watchtower:
+    image: containrrr/watchtower
+    container_name: jl_watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - DOCKER_HUB_USERNAME=${DOCKER_HUB_USERNAME}
+      - DOCKER_HUB_PASSWORD=${DOCKER_HUB_ACCESS_TOKEN}
+    command: --interval 300 
+
+networks:
+  app-network:
+
+volumes:
+  pg_data:
+  certbot-ssl:
+  certbot-challenge:

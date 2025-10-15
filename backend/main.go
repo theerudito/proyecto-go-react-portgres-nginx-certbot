@@ -72,7 +72,7 @@ func main() {
 
 	v1.Get("/characters", getCharactersHandler(db))
 
-	log.Fatal(app.Listen(":1000"))
+	log.Fatal(app.Listen(":" + os.Getenv("PUERTO_API")))
 
 }
 

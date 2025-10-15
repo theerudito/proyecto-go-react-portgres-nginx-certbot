@@ -1,21 +1,4 @@
 services:
-  # --- DATABASE (PostgreSQL) ---
-  db:
-    image: postgres:15
-    container_name: jl_postgres
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-      - ./backend/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
-    ports:
-      - "5432:5432"
-    networks:
-      - app-network
-  
   # --- BACKEND (Go) ---
   backend:
     build: ./backend
@@ -23,9 +6,7 @@ services:
     env_file:
       - ./backend/.env
     ports:
-      - "1000:1000"
-    depends_on:
-      - db
+      - ${PUERTO_BACKEND}
     networks:
       - app-network
 
@@ -40,17 +21,8 @@ services:
     networks:
       - app-network
     ports:
-      - "3000:80"
+      - ${PUERTO_FRONTEND}
   
-  # --- CERTBOT ---
-  certbot:
-    image: certbot/certbot
-    container_name: jl_certbot
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/www/certbot:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --keep-until-expiring --email ${EMAIL} -d ${DOMINIO} --agree-tos
-
   # --- WATCH TOWER ---
   watchtower:
     image: containrrr/watchtower
@@ -66,7 +38,3 @@ services:
 networks:
   app-network:
 
-volumes:
-  pg_data:
-  certbot-ssl:
-  certbot-challenge:

@@ -9,31 +9,3 @@ docker compose restart nginx
 
 docker exec watchtower --run-once
 
-
-
-project-root/
-│
-├── docker-compose.yml
-│
-├── nginx/
-│   └── conf.d/
-        └── crud.conf
-        └── logs
-│
-├── certbot/
-│   ├── conf/     ← certificados (persistentes)
-│   └── www/      ← validaciones ACME
-│
-├── backend/
-│   ├── Dockerfile
-│   ├── .env
-│   ├── go.mod
-│   ├── go.sum
-│   ├── ddl.sql
-│   └── main.go
-│
-└── frontend/
-    ├── Dockerfile
-    ├── package.json
-    ├── vite.config.js
-    └── src/
