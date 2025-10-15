@@ -1,3 +1,4 @@
+version: "3.7"
 
 services:
   # --- BACKEND (Go) ---
@@ -24,7 +25,7 @@ services:
     networks:
       - app-network
     ports:
-      - "3000:80" 
+      - "3000:80" # El puerto 80 dentro del contenedor se mapea al puerto 3000 en el host
 
   # --- DATABASE (PostgreSQL) ---
   db:
@@ -51,12 +52,12 @@ services:
       - frontend
       - backend
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/conf.d/crud.conf:/etc/nginx/conf.d/crud.conf
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     ports:
-      - "8081:80"
-      - "4455:443"
+      - "8081:80" # Accede a Nginx a través de HTTP (puerto 8081)
+      - "4455:443" # Accede a Nginx a través de HTTPS (puerto 4455)
     networks:
       - app-network
 
@@ -68,12 +69,7 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     entrypoint: >
-      sh -c "certbot certonly --webroot
-      --webroot-path=/var/www/certbot
-      --email erudito.dev@gmail.com
-      --agree-tos
-      --no-eff-email
-      -d docker.between-bytes.tech"
+      sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot --email erudito.dev@gmail.com --agree-tos --no-eff-email -d docker.between-bytes.tech"
     networks:
       - app-network
 
@@ -92,6 +88,7 @@ services:
 
 networks:
   app-network:
+
 
 volumes:
   pg_data:
