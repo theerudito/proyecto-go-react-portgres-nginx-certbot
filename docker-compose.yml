@@ -45,7 +45,7 @@ services:
   # --- CERTBOT (SSL) ---
   certbot:
     image: certbot/certbot
-    container_name: certbot_jl
+    container_name: jl_certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt # Volumen persistente para los certificados
       - ./certbot/www:/var/www/certbot # Volumen de validación de Certbot
