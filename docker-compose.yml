@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   # --- BACKEND (Go) ---
   backend:
@@ -25,7 +23,7 @@ services:
     networks:
       - app-network
     ports:
-      - "3000:80" # El puerto 80 dentro del contenedor se mapea al puerto 3000 en el host
+      - "3000:80"
 
   # --- DATABASE (PostgreSQL) ---
   db:
@@ -44,21 +42,36 @@ services:
     networks:
       - app-network
 
-  # --- NGINX Reverse Proxy (sin SSL) ---
+  # --- CERTBOT (SSL) ---
+  certbot:
+    image: certbot/certbot
+    container_name: certbot_jl
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt # Volumen persistente para los certificados
+      - ./certbot/www:/var/www/certbot # Volumen de validación de Certbot
+    entrypoint: >
+      sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot --email erudito.dev@gmail.com --agree-tos --no-eff-email -d docker.between-bytes.tech"
+    networks:
+      - app-network
+
+  # --- NGINX Reverse Proxy (SSL) ---
   nginx:
     image: nginx:alpine # Usamos la imagen oficial de Nginx
     container_name: jl_nginx
     depends_on:
       - frontend
       - backend
+      - certbot # Nginx debe esperar a Certbot
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d # Volumen para la configuración de Nginx
+      - ./certbot/conf:/etc/letsencrypt # Volumen para los certificados generados por Certbot
+      - ./certbot/www:/var/www/certbot # Volumen para las validaciones de ACME
     ports:
-      - "8081:80" # Solo HTTP, no SSL
+      - "8081:80" # HTTP
+      - "4455:443" # HTTPS
     networks:
       - app-network
-  # --- CERTBOT (SSL) --- (No se utiliza en este caso, ya que no queremos SSL)
-  # No es necesario en este caso, puedes omitirlo.
+    command: [ "/bin/sh", "-c", "/start-nginx.sh" ]
 
 networks:
   app-network:
