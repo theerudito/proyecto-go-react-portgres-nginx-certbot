@@ -16,7 +16,9 @@ project-root/
 ├── docker-compose.yml
 │
 ├── nginx/
-│   └── default.conf
+│   └── conf.d/
+        └── crud.conf
+        └── logs
 │
 ├── certbot/
 │   ├── conf/     ← certificados (persistentes)

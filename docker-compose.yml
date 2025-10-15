@@ -51,11 +51,11 @@ services:
       - backend
     volumes:
       - ./nginx/conf.d/crud.conf:/etc/nginx/conf.d/crud.conf
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt # Volumen para los certificados SSL generados
+      - ./certbot/www:/var/www/certbot # Volumen para las validaciones ACME
     ports:
-      - "8081:80" # Accede a Nginx a través de HTTP (puerto 8081)
-      - "4455:443" # Accede a Nginx a través de HTTPS (puerto 4455)
+      - "8081:80"
+      - "4455:443"
     networks:
       - app-network
 
@@ -64,8 +64,8 @@ services:
     image: certbot/certbot
     container_name: certbot
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt # Volumen persistente para certificados
+      - ./certbot/www:/var/www/certbot # Volumen para validaciones ACME
     entrypoint: >
       sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot --email erudito.dev@gmail.com --agree-tos --no-eff-email -d docker.between-bytes.tech"
     networks:
