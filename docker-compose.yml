@@ -1,3 +1,5 @@
+version: "3.7"
+
 services:
   # --- BACKEND (Go) ---
   backend:
@@ -23,7 +25,7 @@ services:
     networks:
       - app-network
     ports:
-      - "3000:80"
+      - "3000:80" # El puerto 80 dentro del contenedor se mapea al puerto 3000 en el host
 
   # --- DATABASE (PostgreSQL) ---
   db:
@@ -61,7 +63,7 @@ services:
     depends_on:
       - frontend
       - backend
-      - certbot # Nginx debe esperar a Certbot
+      - certbot # Nginx debe esperar a que Certbot haya generado los certificados
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d # Volumen para la configuración de Nginx
       - ./certbot/conf:/etc/letsencrypt # Volumen para los certificados generados por Certbot
@@ -71,7 +73,7 @@ services:
       - "4455:443" # HTTPS
     networks:
       - app-network
-    command: [ "/bin/sh", "-c", "/start-nginx.sh" ]
+    command: [ "/bin/sh", "-c", "/start-nginx.sh" ] # Ejecutar script de espera antes de iniciar Nginx
 
 networks:
   app-network:
