@@ -23,7 +23,7 @@ services:
     networks:
       - app-network
     ports:
-      - "3000:80"
+      - "3000:80" # El puerto 80 dentro del contenedor se mapea al puerto 3000 en el host
 
   # --- DATABASE (PostgreSQL) ---
   db:
@@ -44,16 +44,16 @@ services:
 
   # --- NGINX Reverse Proxy ---
   nginx:
-    build: ./nginx # Usar el Dockerfile modificado
+    image: nginx:alpine # Usamos la imagen oficial de Nginx
     container_name: nginx_proxy
     depends_on:
       - frontend
       - backend
       - certbot # Dependencia de Certbot
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./certbot/conf:/etc/letsencrypt # Volumen para los certificados
-      - ./certbot/www:/var/www/certbot # Volumen para las validaciones ACME
+      - ./nginx/conf.d:/etc/nginx/conf.d # Volumen para la configuración de Nginx
+      - ./certbot/conf:/etc/letsencrypt # Volumen para los certificados generados
+      - ./certbot/www:/var/www/certbot # Volumen para las validaciones de ACME
     ports:
       - "8081:80"
       - "4455:443"
@@ -65,10 +65,23 @@ services:
     image: certbot/certbot
     container_name: certbot_jl
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt # Volumen persistente para los certificados
+      - ./certbot/www:/var/www/certbot # Volumen de validación de Certbot
     entrypoint: >
       sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot --email erudito.dev@gmail.com --agree-tos --no-eff-email -d docker.between-bytes.tech"
+    networks:
+      - app-network
+
+  # --- WATCHTOWER (auto-update) ---
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower_jl
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=3600
     networks:
       - app-network
 
