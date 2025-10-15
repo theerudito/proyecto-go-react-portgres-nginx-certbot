@@ -2,7 +2,7 @@ services:
   # --- BACKEND (Go) ---
   backend:
     build: ./backend
-    container_name: backend_jl
+    container_name: go_backend
     env_file:
       - ./backend/.env
     ports:
@@ -15,7 +15,7 @@ services:
   # --- FRONTEND (React/Vite) ---
   frontend:
     build: ./frontend
-    container_name: frontend_jl
+    container_name: react_frontend
     env_file:
       - ./frontend/.env
     depends_on:
@@ -23,12 +23,12 @@ services:
     networks:
       - app-network
     ports:
-      - "3000:80" # El puerto 80 dentro del contenedor se mapea al puerto 3000 en el host
+      - "3000:80"
 
   # --- DATABASE (PostgreSQL) ---
   db:
     image: postgres:15
-    container_name: postgres_jl
+    container_name: postgres_db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -44,14 +44,15 @@ services:
 
   # --- NGINX Reverse Proxy ---
   nginx:
-    image: nginx:alpine
-    container_name: nginx_jl
+    build: ./nginx # Usar el Dockerfile modificado
+    container_name: nginx_proxy
     depends_on:
       - frontend
       - backend
+      - certbot # Dependencia de Certbot
     volumes:
-      - ./nginx/conf.d/crud.conf:/etc/nginx/conf.d/crud.conf
-      - ./certbot/conf:/etc/letsencrypt # Volumen para los certificados SSL generados
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt # Volumen para los certificados
       - ./certbot/www:/var/www/certbot # Volumen para las validaciones ACME
     ports:
       - "8081:80"
@@ -64,23 +65,10 @@ services:
     image: certbot/certbot
     container_name: certbot_jl
     volumes:
-      - ./certbot/conf:/etc/letsencrypt # Volumen persistente para certificados
-      - ./certbot/www:/var/www/certbot # Volumen para validaciones ACME
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     entrypoint: >
       sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot --email erudito.dev@gmail.com --agree-tos --no-eff-email -d docker.between-bytes.tech"
-    networks:
-      - app-network
-
-  # --- WATCHTOWER (auto-update) ---
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower_jl
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=3600
     networks:
       - app-network
 
