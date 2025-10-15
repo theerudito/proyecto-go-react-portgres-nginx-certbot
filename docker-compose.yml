@@ -2,7 +2,7 @@ services:
   # --- BACKEND (Go) ---
   backend:
     build: ./backend
-    container_name: go_backend
+    container_name: backend_jl
     env_file:
       - ./backend/.env
     ports:
@@ -15,7 +15,7 @@ services:
   # --- FRONTEND (React/Vite) ---
   frontend:
     build: ./frontend
-    container_name: react_frontend
+    container_name: frontend_jl
     env_file:
       - ./frontend/.env
     depends_on:
@@ -28,7 +28,7 @@ services:
   # --- DATABASE (PostgreSQL) ---
   db:
     image: postgres:15
-    container_name: postgres_db
+    container_name: postgres_jl
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -45,7 +45,7 @@ services:
   # --- NGINX Reverse Proxy ---
   nginx:
     image: nginx:alpine
-    container_name: nginx_proxy
+    container_name: nginx_jl
     depends_on:
       - frontend
       - backend
@@ -62,7 +62,7 @@ services:
   # --- CERTBOT (SSL) ---
   certbot:
     image: certbot/certbot
-    container_name: certbot
+    container_name: certbot_jl
     volumes:
       - ./certbot/conf:/etc/letsencrypt # Volumen persistente para certificados
       - ./certbot/www:/var/www/certbot # Volumen para validaciones ACME
@@ -74,7 +74,7 @@ services:
   # --- WATCHTOWER (auto-update) ---
   watchtower:
     image: containrrr/watchtower
-    container_name: watchtower
+    container_name: watchtower_jl
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
