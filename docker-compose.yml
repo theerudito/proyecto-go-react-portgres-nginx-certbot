@@ -4,7 +4,7 @@ services:
   # --- BACKEND (Go) ---
   backend:
     build: ./backend
-    container_name: go_backend
+    container_name: jl_backend
     env_file:
       - ./backend/.env
     ports:
@@ -17,7 +17,7 @@ services:
   # --- FRONTEND (React/Vite) ---
   frontend:
     build: ./frontend
-    container_name: react_frontend
+    container_name: jl_frontend
     env_file:
       - ./frontend/.env
     depends_on:
@@ -30,7 +30,7 @@ services:
   # --- DATABASE (PostgreSQL) ---
   db:
     image: postgres:15
-    container_name: postgres_db
+    container_name: jl_postgres
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -47,7 +47,7 @@ services:
   # --- NGINX Reverse Proxy (sin SSL) ---
   nginx:
     image: nginx:alpine # Usamos la imagen oficial de Nginx
-    container_name: nginx_proxy
+    container_name: jl_nginx
     depends_on:
       - frontend
       - backend
