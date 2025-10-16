@@ -9,3 +9,14 @@ docker compose restart nginx
 
 docker exec watchtower --run-once
 
+DB_DRIVER=postgres
+DB_DSN=host=localhost port=5432 user=postgres password=1020 dbname=naruto sslmode=disable
+PUERTO_API=1001
+
+DOCKER_HUB_USERNAME=erudito
+DOCKER_HUB_ACCESS_TOKEN=dckr_pat_K2Zf7J_NkfGMti17QmZIbMB0ou0
+
+EMAIL=erudito.dev@gmail.com
+DOMINIO=docker.between-bytes.tech
+PUERTO_BACKEND=1001:1001
+PUERTO_FRONTEND=1002:80

@@ -27,6 +27,8 @@ func Conectar_DB() *sql.DB {
 	driver := os.Getenv("DB_DRIVER")
 	dsn := os.Getenv("DB_DSN")
 
+	log.Print(dsn)
+
 	db, err := sql.Open(driver, dsn)
 	if err != nil {
 		log.Fatalf("Error al abrir la base de datos: %v", err)
@@ -72,7 +74,7 @@ func main() {
 
 	v1.Get("/characters", getCharactersHandler(db))
 
-	log.Fatal(app.Listen(":" + os.Getenv("PUERTO_API")))
+	log.Fatal(app.Listen(":" + os.Getenv("PUERTO_BACKEND")))
 
 }
 

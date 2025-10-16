@@ -1,12 +1,17 @@
+
 services:
   # --- BACKEND (Go) ---
   backend:
     build: ./backend
     container_name: jl_backend
     env_file:
-      - ./backend/.env
+      - .env
     ports:
-      - ${PUERTO_BACKEND}
+      - ${PUERTO_BACKEND}:${PUERTO_BACKEND}
+    environment:
+      - DB_DRIVER=${DB_DRIVER} 
+      - DB_DSN=${DB_DSN}  
+      - PUERTO_BACKEND=${PUERTO_BACKEND} 
     networks:
       - app-network
 
@@ -15,14 +20,16 @@ services:
     build: ./frontend
     container_name: jl_frontend
     env_file:
-      - ./frontend/.env
+      - .env
     depends_on:
       - backend
     networks:
       - app-network
     ports:
       - ${PUERTO_FRONTEND}
-  
+    environment:
+      - URL_BACKEND={URL_BACKEND}
+
   # --- WATCH TOWER ---
   watchtower:
     image: containrrr/watchtower
@@ -33,8 +40,7 @@ services:
       - WATCHTOWER_CLEANUP=true
       - DOCKER_HUB_USERNAME=${DOCKER_HUB_USERNAME}
       - DOCKER_HUB_PASSWORD=${DOCKER_HUB_ACCESS_TOKEN}
-    command: --interval 300 
+    command: --interval 300
 
 networks:
   app-network:
-
